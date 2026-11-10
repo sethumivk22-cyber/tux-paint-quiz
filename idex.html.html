@@ -1,0 +1,950 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tux Paint Adventure | Kids Quiz</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Fredoka', 'Trebuchet MS', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #c2f5e9, #d9d1ff, #fff0c2);
+    color: #34445e;
+    padding: 25px 15px;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    background: rgba(255,255,255,0.96);
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 18px 55px rgba(77,65,130,0.17);
+    border: 5px solid white;
+}
+
+.header {
+    background: linear-gradient(120deg, #7963df, #a17bf3);
+    padding: 30px 20px;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.header::before,
+.header::after {
+    content: "✨";
+    position: absolute;
+    font-size: 45px;
+    opacity: .6;
+}
+
+.header::before {
+    left: 8%;
+    top: 15%;
+}
+
+.header::after {
+    right: 8%;
+    bottom: 12%;
+}
+
+.logo {
+    font-size: 75px;
+    animation: bounce 2s infinite;
+}
+
+.header h1 {
+    font-size: clamp(26px, 5vw, 42px);
+    margin: 8px 0;
+    text-shadow: 2px 3px 0 rgba(0,0,0,.12);
+}
+
+.header p {
+    font-size: 18px;
+    opacity: .95;
+}
+
+.content {
+    padding: 30px;
+}
+
+.welcome {
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.welcome .big-turtle {
+    font-size: 100px;
+    animation: bounce 2s infinite;
+}
+
+.welcome h2 {
+    color: #8064df;
+    font-size: 32px;
+    margin: 12px 0;
+}
+
+.welcome p {
+    font-size: 18px;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto 25px;
+}
+
+.instructions {
+    background: #fff8dc;
+    border: 2px dashed #f1ca58;
+    padding: 22px;
+    border-radius: 20px;
+    text-align: left;
+    line-height: 2;
+    max-width: 550px;
+    margin: 0 auto 25px;
+}
+
+.start-btn, .next-btn, .restart-btn {
+    padding: 15px 32px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(120deg,#25c58b,#12a975);
+    color: white;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #13885d;
+    transition: .2s;
+}
+
+.start-btn:hover, .next-btn:hover, .restart-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 #13885d;
+}
+
+.start-btn:active, .next-btn:active, .restart-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* QUIZ TOP BAR */
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: #f1edff;
+    color: #7157c9;
+    padding: 12px 20px;
+    border-radius: 50px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.star-stat {
+    background: #fff4c9;
+    color: #bb8511;
+    border: 2px solid #ffe18a;
+}
+
+.star-stat span {
+    font-size: 21px;
+}
+
+/* PROGRESS */
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 600;
+    color: #8064df;
+    margin-bottom: 9px;
+}
+
+.progress-bar {
+    height: 15px;
+    background: #eee9ff;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,#25c58b,#9ceac4);
+    border-radius: 20px;
+    transition: width .5s;
+}
+
+/* QUESTION */
+
+.question-box {
+    background: linear-gradient(140deg,#f8f5ff,#f0faff);
+    padding: 28px;
+    border-radius: 25px;
+    border: 2px solid #ebe5ff;
+}
+
+.question-number {
+    display: inline-block;
+    padding: 8px 17px;
+    background: #e7dcff;
+    color: #7654c8;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+.question {
+    font-size: 27px;
+    line-height: 1.5;
+    color: #374563;
+    margin-bottom: 25px;
+}
+
+.options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.option {
+    padding: 19px 17px;
+    border: 2px solid #e4e0f2;
+    background: white;
+    border-radius: 18px;
+    font-family: inherit;
+    font-size: 18px;
+    font-weight: 500;
+    color: #45516c;
+    text-align: left;
+    cursor: pointer;
+    transition: .2s;
+    min-height: 65px;
+}
+
+.option:hover:not(:disabled) {
+    transform: translateY(-3px);
+    border-color: #9b82ef;
+    background: #f6f1ff;
+}
+
+.option.correct {
+    background: #d9ffeb;
+    border: 3px solid #20bd7c;
+    color: #087847;
+    animation: pop .4s;
+}
+
+.option.wrong {
+    background: #ffe4e4;
+    border: 3px solid #ef7777;
+    color: #b42c2c;
+    animation: shake .35s;
+}
+
+.option:disabled {
+    cursor: default;
+}
+
+/* FEEDBACK */
+
+.feedback {
+    display: none;
+    padding: 18px;
+    margin-top: 22px;
+    border-radius: 18px;
+    font-size: 19px;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+.correct-feedback {
+    display: block;
+    background: #d9ffeb;
+    color: #087847;
+    border: 2px solid #8ce2b5;
+}
+
+.wrong-feedback {
+    display: block;
+    background: #ffe4e4;
+    color: #b42c2c;
+    border: 2px solid #ffb4b4;
+}
+
+/* STAR REWARD */
+
+.reward-area {
+    min-height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.reward-star {
+    display: inline-block;
+    font-size: 43px;
+    animation: starPop .6s ease-out;
+    filter: drop-shadow(0 3px 4px #f5c44c);
+}
+
+.reward-text {
+    color: #d99a00;
+    font-size: 20px;
+    font-weight: 700;
+    animation: pop .5s;
+}
+
+.next-area {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.next-btn {
+    display: none;
+    background: linear-gradient(120deg,#8267e5,#a17bf3);
+    box-shadow: 0 6px 0 #6045bd;
+}
+
+.next-btn:hover {
+    box-shadow: 0 9px 0 #6045bd;
+}
+
+/* RESULTS */
+
+.result {
+    display: none;
+    text-align: center;
+    padding: 20px 10px;
+}
+
+.result-emoji {
+    font-size: 90px;
+    animation: bounce 1.5s infinite;
+}
+
+.result h2 {
+    color: #7961d7;
+    font-size: 34px;
+    margin: 15px 0;
+}
+
+.result p {
+    font-size: 19px;
+    line-height: 1.7;
+}
+
+.score-circle {
+    width: 170px;
+    height: 170px;
+    margin: 25px auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#fff0a9,#ffe18a);
+    border: 8px solid #f6c84d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    box-shadow: 0 8px 20px rgba(240,184,48,.2);
+}
+
+.score-circle strong {
+    font-size: 43px;
+    color: #a87500;
+}
+
+.score-circle span {
+    font-size: 16px;
+    color: #a87500;
+}
+
+.result-stars {
+    font-size: 34px;
+    margin: 15px;
+    letter-spacing: 5px;
+}
+
+.restart-btn {
+    margin-top: 22px;
+}
+
+.footer {
+    background: #f3efff;
+    color: #8064df;
+    text-align: center;
+    padding: 20px;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+/* ANIMATIONS */
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+}
+
+@keyframes pop {
+    0% { transform: scale(.8); }
+    70% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+@keyframes starPop {
+    0% { transform: scale(0) rotate(-90deg); opacity: 0; }
+    70% { transform: scale(1.4) rotate(15deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@media(max-width:600px) {
+    .content {
+        padding: 18px;
+    }
+
+    .options {
+        grid-template-columns: 1fr;
+    }
+
+    .question {
+        font-size: 22px;
+    }
+
+    .header h1 {
+        font-size: 27px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+        <div class="logo">🐢</div>
+        <h1>🎨 Tux Paint Adventure!</h1>
+        <p>Learn • Play • Earn Stars ⭐</p>
+    </header>
+
+    <main class="content">
+
+        <!-- WELCOME -->
+
+        <section class="welcome" id="welcome">
+
+            <div class="big-turtle">🐢</div>
+
+            <h2>Hello, Little Artist! 🌈</h2>
+
+            <p>
+                Welcome to the magical world of Tux Paint!
+                Answer fun questions, collect golden stars
+                and become a Tux Paint Superstar!
+            </p>
+
+            <div class="instructions">
+                <h3>🎮 How to Play</h3>
+                ⭐ Read each question carefully.<br>
+                🎨 Choose the correct answer.<br>
+                🏆 Get a golden star for every correct answer.<br>
+                🌟 Collect all 10 stars to become a superstar!
+            </div>
+
+            <button class="start-btn" onclick="startQuiz()">
+                🚀 LET'S PLAY!
+            </button>
+
+        </section>
+
+        <!-- QUIZ -->
+
+        <section id="quiz" class="hidden">
+
+            <div class="top-bar">
+
+                <div class="stat" id="questionCount">
+                    📝 Question 1/10
+                </div>
+
+                <div class="stat star-stat">
+                    ⭐ Stars: <span id="starCount">0</span>/10
+                </div>
+
+            </div>
+
+            <div class="progress-label">
+                <span>Your Progress</span>
+                <span id="progressText">0%</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div class="question-box">
+
+                <div class="question-number" id="number">
+                    QUESTION 1
+                </div>
+
+                <h2 class="question" id="question"></h2>
+
+                <div class="options" id="options"></div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <div class="reward-area" id="rewardArea"></div>
+
+                <div class="next-area">
+                    <button class="next-btn" id="nextBtn"
+                        onclick="nextQuestion()">
+                        NEXT QUESTION ➜
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- RESULTS -->
+
+        <section class="result" id="result">
+
+            <div class="result-emoji" id="resultEmoji">🏆</div>
+
+            <h2 id="resultTitle">Quiz Completed!</h2>
+
+            <p id="resultDescription"></p>
+
+            <div class="score-circle">
+                <strong id="finalScore">0/10</strong>
+                <span>YOUR SCORE</span>
+            </div>
+
+            <div class="result-stars" id="finalStars"></div>
+
+            <h2 id="resultMessage">Amazing Work!</h2>
+
+            <p id="resultExtra"></p>
+
+            <button class="restart-btn" onclick="restartQuiz()">
+                🔄 PLAY AGAIN
+            </button>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        🌻 Keep Learning, Keep Creating, Keep Smiling! 🐢
+    </footer>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+    question: "What is Tux Paint?",
+    options: [
+        "A. A word-processing program",
+        "B. A computer drawing program",
+        "C. A music player",
+        "D. A web browser"
+    ],
+    answer: 1,
+    explanation: "Tux Paint is a fun computer drawing program!"
+},
+
+{
+    question: "What is the main purpose of a color palette in a drawing program?",
+    options: [
+        "A. To select colors",
+        "B. To save pictures",
+        "C. To erase pictures",
+        "D. To open files"
+    ],
+    answer: 0,
+    explanation: "The color palette helps us select different colors."
+},
+
+{
+    question: "Which tool can be used to remove an unwanted part of a drawing?",
+    options: [
+        "A. Brush tool",
+        "B. Shape tool",
+        "C. Eraser tool",
+        "D. Text tool"
+    ],
+    answer: 2,
+    explanation: "The Eraser tool removes unwanted parts of a drawing."
+},
+
+{
+    question: "We can create and color pictures using Tux Paint.",
+    options: [
+        "True",
+        "False"
+    ],
+    answer: 0,
+    explanation: "Yes! Tux Paint allows us to create and color pictures."
+},
+
+{
+    question: "Which device is commonly used to select drawing tools and colors?",
+    options: [
+        "A. Speaker",
+        "B. Mouse",
+        "C. Printer",
+        "D. Monitor"
+    ],
+    answer: 1,
+    explanation: "We use a mouse to click and select tools and colors."
+},
+
+{
+    question: "What should you do after completing your drawing?",
+    options: [
+        "A. Switch off the computer immediately",
+        "B. Delete the picture",
+        "C. Save the picture",
+        "D. Close the program without saving"
+    ],
+    answer: 2,
+    explanation: "Always save your picture so you can see it again!"
+},
+
+{
+    question: "What colors would you use to color a tortoise?",
+    options: [
+        "A. Green, brown and yellow",
+        "B. Only pink",
+        "C. Only blue",
+        "D. Only purple"
+    ],
+    answer: 0,
+    explanation: "Green, brown and yellow are suitable tortoise colors!"
+},
+
+{
+    question: "Which tool is used to draw freehand lines?",
+    options: [
+        "A. Eraser tool",
+        "B. Pencil tool",
+        "C. Text tool",
+        "D. Fill tool"
+    ],
+    answer: 1,
+    explanation: "The Pencil tool helps us draw freehand lines."
+},
+
+{
+    question: "What is the use of the Fill tool?",
+    options: [
+        "A. To write text",
+        "B. To erase a picture",
+        "C. To fill an enclosed area with color",
+        "D. To draw straight lines"
+    ],
+    answer: 2,
+    explanation: "The Fill tool adds color inside an enclosed area."
+},
+
+{
+    question: "Which tool can be used to draw a circle?",
+    options: [
+        "A. Shape tool",
+        "B. Eraser tool",
+        "C. Text tool",
+        "D. Color palette"
+    ],
+    answer: 0,
+    explanation: "The Shape tool can be used to draw circles and other shapes."
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+function startQuiz() {
+
+    document.getElementById("welcome").classList.add("hidden");
+
+    document.getElementById("result").style.display = "none";
+
+    document.getElementById("quiz").classList.remove("hidden");
+
+    currentQuestion = 0;
+    score = 0;
+
+    showQuestion();
+
+}
+
+function showQuestion() {
+
+    answered = false;
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("number").textContent =
+        "QUESTION " + (currentQuestion + 1);
+
+    document.getElementById("question").textContent =
+        q.question;
+
+    document.getElementById("questionCount").textContent =
+        "📝 Question " + (currentQuestion + 1) + "/10";
+
+    document.getElementById("starCount").textContent = score;
+
+    document.getElementById("progressText").textContent =
+        Math.round(currentQuestion / questions.length * 100) + "%";
+
+    document.getElementById("progress").style.width =
+        (currentQuestion / questions.length * 100) + "%";
+
+    const optionsContainer = document.getElementById("options");
+
+    optionsContainer.innerHTML = "";
+
+    q.options.forEach((option, index) => {
+
+        const button = document.createElement("button");
+
+        button.className = "option";
+
+        button.textContent = option;
+
+        button.onclick = () => checkAnswer(index, button);
+
+        optionsContainer.appendChild(button);
+
+    });
+
+    const feedback = document.getElementById("feedback");
+
+    feedback.className = "feedback";
+
+    feedback.style.display = "none";
+
+    feedback.textContent = "";
+
+    document.getElementById("rewardArea").innerHTML = "";
+
+    document.getElementById("nextBtn").style.display = "none";
+
+}
+
+function checkAnswer(selected, selectedButton) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const q = questions[currentQuestion];
+
+    const buttons = document.querySelectorAll(".option");
+
+    buttons.forEach(button => button.disabled = true);
+
+    const rewardArea = document.getElementById("rewardArea");
+
+    if (selected === q.answer) {
+
+        score++;
+
+        selectedButton.classList.add("correct");
+
+        showFeedback(
+            "correct-feedback",
+            "🎉 SUPER! That's the correct answer! " + q.explanation
+        );
+
+        // INSTANT STAR REWARD
+
+        rewardArea.innerHTML =
+            '<span class="reward-star">⭐</span>' +
+            '<span class="reward-star">✨</span>' +
+            '<span class="reward-star">⭐</span>' +
+            '<span class="reward-text">+1 GOLDEN STAR!</span>';
+
+        // Update star counter immediately
+
+        document.getElementById("starCount").textContent = score;
+
+    } else {
+
+        selectedButton.classList.add("wrong");
+
+        buttons[q.answer].classList.add("correct");
+
+        showFeedback(
+            "wrong-feedback",
+            "💡 Good try! The correct answer is: " +
+            q.options[q.answer] + ". " + q.explanation
+        );
+
+        rewardArea.innerHTML =
+            '<span class="reward-text" style="color:#e47a6c;">Keep trying! 🌈</span>';
+
+    }
+
+    document.getElementById("nextBtn").style.display = "inline-block";
+
+    if (currentQuestion === questions.length - 1) {
+
+        document.getElementById("nextBtn").textContent =
+            "SEE MY RESULTS 🏆";
+
+    }
+
+}
+
+function showFeedback(type, message) {
+
+    const feedback = document.getElementById("feedback");
+
+    feedback.className = "feedback " + type;
+
+    feedback.textContent = message;
+
+    feedback.style.display = "block";
+
+}
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+
+        showQuestion();
+
+    } else {
+
+        showResults();
+
+    }
+
+}
+
+function showResults() {
+
+    document.getElementById("quiz").classList.add("hidden");
+
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("progress").style.width = "100%";
+
+    document.getElementById("progressText").textContent = "100%";
+
+    document.getElementById("finalScore").textContent =
+        score + "/10";
+
+    // Display earned stars
+
+    document.getElementById("finalStars").textContent =
+        "⭐".repeat(score) + "☆".repeat(10-score);
+
+    let emoji, title, message, description;
+
+    if (score === 10) {
+
+        emoji = "🏆";
+        title = "PERFECT SCORE!";
+        message = "TUX PAINT SUPERSTAR!";
+        description = "WOW! You are amazing! You answered all 10 questions correctly!";
+
+    } else if (score >= 8) {
+
+        emoji = "🌟";
+        title = "EXCELLENT WORK!";
+        message = "YOU ARE A STAR!";
+        description = "Fantastic! You have learned so much about Tux Paint!";
+
+    } else if (score >= 5) {
+
+        emoji = "👏";
+        title = "GOOD JOB!";
+        message = "KEEP SHINING!";
+        description = "Well done! Keep practising and collecting more stars!";
+
+    } else {
+
+        emoji = "🐢";
+        title = "NICE TRY!";
+        message = "NEVER GIVE UP!";
+        description = "Every little artist learns by practising. Try again and earn more stars!";
+
+    }
+
+    document.getElementById("resultEmoji").textContent = emoji;
+
+    document.getElementById("resultTitle").textContent = title;
+
+    document.getElementById("resultMessage").textContent = message;
+
+    document.getElementById("resultDescription").textContent = description;
+
+    document.getElementById("resultExtra").textContent =
+        "You collected " + score + " out of 10 golden stars!";
+
+}
+
+function restartQuiz() {
+
+    document.getElementById("result").style.display = "none";
+
+    document.getElementById("welcome").classList.remove("hidden");
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    answered = false;
+
+}
+
+</script>
+
+</body>
+</html>
